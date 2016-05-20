@@ -17,11 +17,9 @@ module.exports = function(grunt) {
 	grunt.registerTask('compile', [
 		'copy:less',
 		'copy:less_plugins',
-		'concat:less_theme_dependencies',
 		'concat:less_plugins',
 		'concat:js',
 		'less:uncompressed',
-		'clean_bootstrap2_css',
 		'replace',
 		'build_standalone',
 		'uglify',
@@ -32,13 +30,6 @@ module.exports = function(grunt) {
 		'configure',
 		'compile'
 	]);
-
-	grunt.registerTask('clean_bootstrap2_css', 'Cleans CSS rules ocurring before the header comment.', function() {
-		var file = 'dist/css/selectize.bootstrap2.css';
-		var source = fs.readFileSync(file, 'utf8');
-		grunt.file.write(file, source.replace(/^(.|\s)+?\/\*/m, '/*'));
-		grunt.log.writeln('Cleaned "' + file + '".');
-	});
 
 	grunt.registerTask('build_standalone', '', function() {
 		var files, i, n, source, name, path, modules = [];
@@ -160,11 +151,7 @@ module.exports = function(grunt) {
 			options: {},
 			uncompressed: {
 				files: {
-					'dist/css/selectize.css': ['dist/less/selectize.less'],
-					'dist/css/selectize.default.css': ['dist/less/selectize.default.less'],
-					'dist/css/selectize.legacy.css': ['dist/less/selectize.legacy.less'],
-					'dist/css/selectize.bootstrap2.css': ['dist/less/selectize.bootstrap2.tmp.less'],
-					'dist/css/selectize.bootstrap3.css': ['dist/less/selectize.bootstrap3.tmp.less']
+					'dist/css/selectize.css': ['dist/less/selectize.less']
 				}
 			}
 		},
@@ -185,28 +172,12 @@ module.exports = function(grunt) {
 				files: {
 					'dist/less/selectize.less': ['dist/less/selectize.less']
 				}
-			},
-			less_theme_dependencies: {
-				options: {stripBanners: false},
-				files: {
-					'dist/less/selectize.bootstrap2.tmp.less': [
-						'bower_components/bootstrap2/less/variables.less',
-						'bower_components/bootstrap2/less/mixins.less',
-						'dist/less/selectize.bootstrap2.less'
-					],
-					'dist/less/selectize.bootstrap3.tmp.less': [
-						'bower_components/bootstrap3/less/variables.less',
-						'bower_components/bootstrap3/less/mixins/nav-divider.less',
-						'dist/less/selectize.bootstrap3.less'
-					]
-				}
 			}
 		},
 		uglify: {
 			main: {
 				options: {
 					'banner': '/*! selectize.js - v<%= pkg.version %> | https://github.com/brianreavis/selectize.js | Apache License (v2) */\n',
-					'report': 'gzip',
 					'ascii-only': true
 				},
 				files: {
